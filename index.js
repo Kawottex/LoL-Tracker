@@ -24,7 +24,7 @@ const discordClient = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
 initDiscordClient();
 
-function initDiscordClient() {    
+function initDiscordClient() {
     discordClient.once('ready', () => {
         if (process.argv.length >= 3 && process.argv[2] === '--discordInfos') {
             DiscordHelper.displayServersInfos(discordClient);
@@ -40,15 +40,22 @@ async function mainRequestLoop(channel) {
     const usersId = await LoLHelper.getSummonersId();
     while (true) {
         for (let i = 0; i < usersId.length; i++) {
-            const riotAPIAddr = LoLHelper.getEntriesBySummoner(usersId[i]);
-            const data = await AxiosHelper.riotAPIGet(riotAPIAddr);
-            if (data != null) {
-                updateDatas(channel, usersId[i], data);
-            }
-            await AxiosHelper.delay(500);
+            const currUserId = usersId[i];
+            const lolEntriesAddr = LoLHelper.getLoLEntriesBySummoner(currUserId);
+            const tftEntriesAddr = LoLHelper.getTFTEntriesBySummoner(currUserId);
+            await updateRiotEntries(channel, currUserId, lolEntriesAddr);
+            await updateRiotEntries(channel, currUserId, tftEntriesAddr);
         }
-        await AxiosHelper.delay(30000);
+        await AxiosHelper.delay(60000);
     }
+}
+
+async function updateRiotEntries(channel, userId, entriesAddr) {
+    const data = await AxiosHelper.riotAPIGet(entriesAddr);
+    if (data != null) {
+        updateDatas(channel, userId, data);
+    }
+    await AxiosHelper.delay(500);
 }
 
 function updateDatas(channel, summId, dataArr) {
@@ -60,7 +67,7 @@ function updateDatas(channel, summId, dataArr) {
         const currData = dataArr[i];
         const queueType = currData[Enums.API_INFOS_KEY.QUEUE_TYPE];
 
-        if (queueType.indexOf("_TFT_") !== -1) {
+        if (queueType.indexOf("TFT") !== -1 && queueType !== "RANKED_TFT") {
             continue;
         }
         const summName = currData[Enums.API_INFOS_KEY.SUMMONER_NAME];
@@ -73,7 +80,7 @@ function updateDatas(channel, summId, dataArr) {
             continue;
         }
 
-        let result = LoLHelper.compareQueueDatas(summName, savedQueue, currData);
+        let result = LoLHelper.compareQueueDatas(summName, savedQueue, currData, queueType);
         if (result[Enums.COMPARISON_RESULT_KEY.HAS_CHANGED]) {
             console.log("New infos for " + summName + " queue " + queueType);
             let finalMsg = result[Enums.COMPARISON_RESULT_KEY.MAIN_TEXT] + '\n' + result[COMPARISON_RESULT_KEY.RESUME_TEXT];
