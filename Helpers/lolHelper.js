@@ -103,7 +103,7 @@ function generateLPDiffResult(summName, savedQueue, currData, queueType) {
 
     let mainText = hasWon ? '📈' : '📉';
     mainText += ' **' + summName + '** ';
-    mainText += hasWin ? 'A GAGNÉ ' + (currLP - savedLP).toString() : 'A PERDU ' + (savedLP - currLP).toString();
+    mainText += hasWon ? 'A GAGNÉ ' + (currLP - savedLP).toString() : 'A PERDU ' + (savedLP - currLP).toString();
     mainText += ' LPs EN ' + queueTypeKeyToStr(queueType);
     return mainText;
 }
