@@ -83,7 +83,7 @@ function updateDatas(channel, summId, dataArr) {
         let result = LoLHelper.compareQueueDatas(summName, savedQueue, currData, queueType);
         if (result[Enums.COMPARISON_RESULT_KEY.HAS_CHANGED]) {
             console.log("New infos for " + summName + " queue " + queueType);
-            let finalMsg = result[Enums.COMPARISON_RESULT_KEY.MAIN_TEXT] + '\n' + result[COMPARISON_RESULT_KEY.RESUME_TEXT];
+            let finalMsg = result[Enums.COMPARISON_RESULT_KEY.MAIN_TEXT] + '\n' + result[Enums.COMPARISON_RESULT_KEY.RESUME_TEXT];
             channel.send(finalMsg);
         }
         LoLHelper.saveNewQueueDatas(savedQueue, currData);
