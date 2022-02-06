@@ -1,6 +1,6 @@
-const { guildId, channelId } = require('../config.json');
+const { guildId } = require('../config.json');
 
-function findCorrectChannel(discordClient) {
+function findCorrectChannel(discordClient, channelId) {
     const guild = discordClient.guilds.cache.find(guild => guild.id === guildId);
     return guild.channels.cache.find(channel => channel.id === channelId);
 }

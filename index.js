@@ -1,6 +1,6 @@
 // Require the necessary discord.js classes
 const { Client, Intents } = require('discord.js');
-const { token } = require('./config.json');
+const { token, channelIdLPDiff, channelIdRankDiff, channelIdTierDiff } = require('./config.json');
 const DiscordHelper = require('./Helpers/discordHelper');
 const LoLHelper = require('./Helpers/lolHelper');
 const Enums = require('./enums');
@@ -29,36 +29,39 @@ function initDiscordClient() {
         if (process.argv.length >= 3 && process.argv[2] === '--discordInfos') {
             DiscordHelper.displayServersInfos(discordClient);
         } else {
-            const channel = DiscordHelper.findCorrectChannel(discordClient);
-            mainRequestLoop(channel);
+            const channelLP = DiscordHelper.findCorrectChannel(discordClient, channelIdLPDiff);
+            const channelRank = DiscordHelper.findCorrectChannel(discordClient, channelIdRankDiff);
+            const channelTier = DiscordHelper.findCorrectChannel(discordClient, channelIdTierDiff);
+            let channels = [ channelLP, channelRank, channelTier ];
+            mainRequestLoop(channels);
         }
     });
     discordClient.login(token);
 }
 
-async function mainRequestLoop(channel) {
+async function mainRequestLoop(channels) {
     const usersId = await LoLHelper.getSummonersId();
     while (true) {
         for (let i = 0; i < usersId.length; i++) {
             const currUserId = usersId[i];
             const lolEntriesAddr = LoLHelper.getLoLEntriesBySummoner(currUserId);
             const tftEntriesAddr = LoLHelper.getTFTEntriesBySummoner(currUserId);
-            await updateRiotEntries(channel, currUserId, lolEntriesAddr);
-            await updateRiotEntries(channel, currUserId, tftEntriesAddr);
+            await updateRiotEntries(channels, currUserId, lolEntriesAddr);
+            await updateRiotEntries(channels, currUserId, tftEntriesAddr);
         }
         await AxiosHelper.delay(60000);
     }
 }
 
-async function updateRiotEntries(channel, userId, entriesAddr) {
+async function updateRiotEntries(channels, userId, entriesAddr) {
     const data = await AxiosHelper.riotAPIGet(entriesAddr);
     if (data != null) {
-        updateDatas(channel, userId, data);
+        updateDatas(channels, userId, data);
     }
     await AxiosHelper.delay(500);
 }
 
-function updateDatas(channel, summId, dataArr) {
+function updateDatas(channels, summId, dataArr) {
     if (summData[summId] == null) {
         summData[summId] = {};
     }
@@ -84,7 +87,10 @@ function updateDatas(channel, summId, dataArr) {
         if (result[Enums.COMPARISON_RESULT_KEY.HAS_CHANGED]) {
             console.log("New infos for " + summName + " queue " + queueType);
             let finalMsg = result[Enums.COMPARISON_RESULT_KEY.MAIN_TEXT] + '\n' + result[Enums.COMPARISON_RESULT_KEY.RESUME_TEXT];
-            channel.send(finalMsg);
+            let channelToUse = channels[result[Enums.COMPARISON_RESULT_KEY.CHANGE_LEVEL]];
+            if (channelToUse != null) {
+                channelToUse.send(finalMsg);
+            }
         }
         LoLHelper.saveNewQueueDatas(savedQueue, currData);
     }
