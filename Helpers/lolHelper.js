@@ -60,9 +60,9 @@ function compareQueueDatas(summName, savedQueue, currData, queueType) {
 
 function generateTierDiffResult(summName, savedQueue, currData, queueType) {
     const savedTierNum = savedQueue[enums.SAVED_INFOS_KEY.TIER];
-    const currTierNum = enums.lolRankToNum[currData[enums.API_INFOS_KEY.TIER]];
+    const currTierNum = enums.lolTierToNum[currData[enums.API_INFOS_KEY.TIER]];
     const savedRank = enums.lolNumToRank[savedQueue[enums.SAVED_INFOS_KEY.RANK]];
-    const currRank = currData[enums.API_INFOS_KEY.TIER];
+    const currRank = currData[enums.API_INFOS_KEY.RANK];
     const hasWon = savedTierNum < currTierNum;
 
     let mainText = hasWon ? '🥳' : '🤡';
@@ -78,11 +78,11 @@ function generateTierDiffResult(summName, savedQueue, currData, queueType) {
 }
 
 function generateRankDiffResult(summName, savedQueue, currData, queueType) {
-    const savedTierNum = savedQueue[enums.SAVED_INFOS_KEY.TIER];
-    const currTierNum = enums.lolRankToNum[currData[enums.API_INFOS_KEY.TIER]];
-    const savedRank = enums.lolNumToRank[savedQueue[enums.SAVED_INFOS_KEY.RANK]];
-    const currRank = currData[enums.API_INFOS_KEY.TIER];
-    const hasWon = savedTierNum < currTierNum;
+    const savedTier = enums.lolNumToTier[savedQueue[enums.SAVED_INFOS_KEY.TIER]];
+    const currTier = currData[enums.API_INFOS_KEY.TIER];
+    const savedRankNum = savedQueue[enums.SAVED_INFOS_KEY.RANK];
+    const currRankNum = enums.lolRankToNum[currData[enums.API_INFOS_KEY.RANK]];
+    const hasWon = savedRankNum < currRankNum;
 
     let mainText = hasWon ? '🔥' : '🥶';
     mainText += ' **' + summName + '** ';
@@ -91,7 +91,7 @@ function generateRankDiffResult(summName, savedQueue, currData, queueType) {
     } else {
         mainText += hasWon ? 'A REMPORTÉ SON BO3, ' : 'A ÉTÉ DEMOTE, ';
     }
-    mainText += 'IL PASSE DE ' + enums.lolNumToTier[savedTierNum] + ' ' + savedRank + ' Á ' + enums.lolNumToTier[currTierNum] + ' ' + currRank;
+    mainText += 'IL PASSE DE ' + savedTier + ' ' + enums.lolNumToRank[savedRankNum] + ' Á ' + currTier + ' ' + enums.lolNumToRank[currRankNum];
     mainText += ' EN ' + queueTypeKeyToStr(queueType);
     return mainText;
 }
