@@ -113,8 +113,7 @@ function generateResumeText(savedQueue, currData, queueType) {
     const savedLP = savedQueue[enums.SAVED_INFOS_KEY.LP];
     const currLP = currData[enums.API_INFOS_KEY.LP];
 
-    return `\`[${queueTypeKeyToStr(queueType)}] ${savedTier} ${savedRank} - ${savedLP} LPs -> 
-    ${currTier} ${currRank} - ${currLP} LPs\``;
+    return `\`[${queueTypeKeyToStr(queueType)}] ${savedTier} ${savedRank} - ${savedLP} LPs -> ${currTier} ${currRank} - ${currLP} LPs\``;
 }
 
 function queueTypeKeyToStr(queueType) {
