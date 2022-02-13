@@ -45,9 +45,9 @@ async function mainRequestLoop(channels) {
         for (let i = 0; i < usersId.length; i++) {
             const currUserId = usersId[i];
             const lolEntriesAddr = LoLHelper.getLoLEntriesBySummoner(currUserId);
-            const tftEntriesAddr = LoLHelper.getTFTEntriesBySummoner(currUserId);
+            //const tftEntriesAddr = LoLHelper.getTFTEntriesBySummoner(currUserId);
             await updateRiotEntries(channels, currUserId, lolEntriesAddr);
-            await updateRiotEntries(channels, currUserId, tftEntriesAddr);
+            //await updateRiotEntries(channels, currUserId, tftEntriesAddr);
         }
         await AxiosHelper.delay(60000);
     }
@@ -70,7 +70,7 @@ function updateDatas(channels, summId, dataArr) {
         const currData = dataArr[i];
         const queueType = currData[Enums.API_INFOS_KEY.QUEUE_TYPE];
 
-        if (queueType.indexOf("TFT") !== -1 && queueType !== "RANKED_TFT") {
+        if (queueType.indexOf("TFT") !== -1 /*&& queueType !== "RANKED_TFT"*/) {
             continue;
         }
         const summName = currData[Enums.API_INFOS_KEY.SUMMONER_NAME];

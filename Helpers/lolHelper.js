@@ -66,14 +66,15 @@ function generateTierDiffResult(summName, savedQueue, currData, queueType) {
     const hasWon = savedTierNum < currTierNum;
 
     let mainText = hasWon ? '🥳' : '🤡';
-    mainText += ' **' + summName + '** ';
+    mainText += ` **${summName}** `;
     if (queueType.indexOf("TFT") !== -1) {
         mainText += hasWon ? 'MONTE DE LIGUE, ' : 'DESCEND DE LIGUE, ';
     } else {
-        mainText += hasWon ? 'A REMPORTÉ SON BO5 ET MONTE DE LIGUE, ' : 'DESCEND DE LIGUE, ';
+        mainText += hasWon ? `A REMPORTÉ SON BO5 ET ARRIVE EN ${enums.lolNumToTier[currTierNum]}, ` 
+        : `DIT AUREVOIR AU ${enums.lolNumToTier[savedTierNum]} ET DESCEND EN ${enums.lolNumToTier[currTierNum]}, `;
     }
-    mainText += 'IL PASSE DE ' + enums.lolNumToTier[savedTierNum] + ' ' + savedRank + ' Á ' + enums.lolNumToTier[currTierNum] + ' ' + currRank;
-    mainText += ' EN ' + queueTypeKeyToStr(queueType);
+    mainText += `IL PASSE DE ${enums.lolNumToTier[savedTierNum]} ${savedRank} À ${enums.lolNumToTier[currTierNum]} ${currRank}`;
+    mainText += ` EN ${queueTypeKeyToStr(queueType)}`;
     return mainText;
 }
 
@@ -85,14 +86,10 @@ function generateRankDiffResult(summName, savedQueue, currData, queueType) {
     const hasWon = savedRankNum < currRankNum;
 
     let mainText = hasWon ? '🔥' : '🥶';
-    mainText += ' **' + summName + '** ';
-    if (queueType.indexOf("TFT") !== -1) {
-        mainText += hasWon ? 'MONTE DE RANG, ' : 'A ÉTÉ DEMOTE, ';
-    } else {
-        mainText += hasWon ? 'A REMPORTÉ SON BO3, ' : 'A ÉTÉ DEMOTE, ';
-    }
-    mainText += 'IL PASSE DE ' + savedTier + ' ' + enums.lolNumToRank[savedRankNum] + ' Á ' + currTier + ' ' + enums.lolNumToRank[currRankNum];
-    mainText += ' EN ' + queueTypeKeyToStr(queueType);
+    mainText += ` **${summName}** `;
+    mainText += hasWon ? 'MONTE DE RANG, ' : 'A ÉTÉ DEMOTE, ';
+    mainText += `IL PASSE DE ${savedTier} ${enums.lolNumToRank[savedRankNum]} À ${currTier} ${enums.lolNumToRank[currRankNum]}`;
+    mainText += ` EN ${queueTypeKeyToStr(queueType)}`;
     return mainText;
 }
 
@@ -102,9 +99,9 @@ function generateLPDiffResult(summName, savedQueue, currData, queueType) {
     const hasWon = savedLP < currLP;
 
     let mainText = hasWon ? '📈' : '📉';
-    mainText += ' **' + summName + '** ';
-    mainText += hasWon ? 'A GAGNÉ ' + (currLP - savedLP).toString() : 'A PERDU ' + (savedLP - currLP).toString();
-    mainText += ' LPs EN ' + queueTypeKeyToStr(queueType);
+    mainText += ` **${summName}** `;
+    mainText += hasWon ? `A GAGNÉ ${(currLP - savedLP).toString()}` : `A PERDU ${(savedLP - currLP).toString()}`;
+    mainText += ` LPs EN ${queueTypeKeyToStr(queueType)}`;
     return mainText;
 }
 
@@ -116,8 +113,8 @@ function generateResumeText(savedQueue, currData, queueType) {
     const savedLP = savedQueue[enums.SAVED_INFOS_KEY.LP];
     const currLP = currData[enums.API_INFOS_KEY.LP];
 
-    return '`[' + queueTypeKeyToStr(queueType) + '] ' + savedTier + ' ' + savedRank + ' - ' + savedLP + ' LPs -> ' 
-    + currTier + ' ' + currRank + ' - ' + currLP + " LPs`";
+    return `\`[${queueTypeKeyToStr(queueType)}] ${savedTier} ${savedRank} - ${savedLP} LPs -> 
+    ${currTier} ${currRank} - ${currLP} LPs\``;
 }
 
 function queueTypeKeyToStr(queueType) {
